@@ -5,7 +5,7 @@ const jwt = require("jsonwebtoken");
 exports.userLogin = async (req, res) => {
   try {
     const { email, password } = req.body;
-    const accessToken = jwt.sign(email, process.env.ACCESS_TOKE_SECRET);
+    const accessToken = jwt.sign(email, process.env.ACCESS_TOKEN_SECRET);
     res.send({
       data: {
         email,
@@ -22,10 +22,14 @@ exports.userLogin = async (req, res) => {
 
 exports.addUsers = async (req, res) => {
   try {
+    const { email } = req.body;
+    const accessToken = jwt.sign(email, process.env.ACCESS_TOKEN_SECRET);
     await user.create(req.body);
     res.send({
-      status: "succes",
-      message: "Add user successfully",
+      data: {
+        email: email,
+        token: accessToken,
+      },
     });
   } catch (error) {
     console.log(error);
