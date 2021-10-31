@@ -11,8 +11,14 @@ module.exports = {
       title: {
         type: Sequelize.STRING,
       },
-      countryId: {
+      countries: {
         type: Sequelize.INTEGER,
+        references: {
+          model: "countries",
+          key: "id",
+        },
+        onUpdate: "CASCADE",
+        onDelete: "CASCADE",
       },
       accomodation: {
         type: Sequelize.STRING,
@@ -31,9 +37,6 @@ module.exports = {
       },
       dateTrip: {
         type: Sequelize.STRING,
-      },
-      price: {
-        type: Sequelize.INTEGER,
       },
       price: {
         type: Sequelize.INTEGER,
