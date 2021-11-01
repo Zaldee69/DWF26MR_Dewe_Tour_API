@@ -41,26 +41,26 @@ router.post("/login", userLogin);
 // user routes
 router.get("/users", getUsers);
 router.get("/users", getUsers);
-router.delete("/users/:id", adminOnly, deleteUser);
+router.delete("/users/:id", auth, adminOnly, deleteUser);
 
 //country routes
-router.post("/country", addCountry);
+router.post("/country", auth, adminOnly, addCountry);
 router.get("/country", getCountry);
 router.get("/country/:id", getDetailCountry);
-router.delete("/country/:id", adminOnly, deleteCountry);
-router.patch("/country/:id", adminOnly, editCountry);
+router.delete("/country/:id", auth, adminOnly, deleteCountry);
+router.patch("/country/:id", auth, adminOnly, editCountry);
 
 //trip routes
-router.post("/trip", uploadFile("image"), addTrip);
+router.post("/trip", uploadFile("image"), auth, adminOnly, addTrip);
 router.get("/trip", getTrip);
 router.get("/trip/:id", getDetailTrip);
-router.patch("/trip/:id", adminOnly, editTrip);
-router.delete("trip/:id", adminOnly, deleteTrip);
+router.patch("/trip/:id", auth, adminOnly, editTrip);
+router.delete("/trip/:id", auth, adminOnly, deleteTrip);
 
 //transaction routes
 router.post("/transaction", auth, addTransaction);
 router.get("/transaction", auth, getTransaction);
 router.get("/transaction/:id", auth, getDetailsTransaction);
-router.patch("/transaction/:id", auth, editTransaction);
+router.patch("/transaction/:id", adminOnly, auth, editTransaction);
 
 module.exports = router;

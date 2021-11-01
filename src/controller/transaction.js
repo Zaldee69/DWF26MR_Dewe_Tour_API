@@ -2,11 +2,12 @@ const { transaction, user, trip } = require("../../models");
 
 exports.addTransaction = async (req, res) => {
   try {
-    const dataTransaction = await transaction.create(req.body);
+    const { ...data } = req.body;
+    const transactionData = await transaction.create(data);
     res.send({
       status: "success",
       message: "add transaction success",
-      data: dataTransaction,
+      transactionData,
     });
   } catch (error) {
     console.log(error);
@@ -20,6 +21,7 @@ exports.addTransaction = async (req, res) => {
 exports.getTransaction = async (req, res) => {
   try {
     const dataTransaction = await transaction.findAll({
+      exclude: ["createdAt", "updatedAt", "id"],
       include: [
         {
           model: user,
@@ -44,7 +46,6 @@ exports.getTransaction = async (req, res) => {
           },
         },
       ],
-      exclude: ["createdAt", "updatedAt", "id"],
     });
     res.send({
       status: "success",
@@ -74,7 +75,7 @@ exports.getDetailsTransaction = async (req, res) => {
           exclude: ["createdAt", "updatedAt", "id", "password", "status"],
         },
         model: trip,
-        as: "model",
+        as: "trips",
         attributes: {
           exclude: ["createdAt", "updatedAt"],
         },

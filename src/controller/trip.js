@@ -1,3 +1,4 @@
+const { title } = require("process");
 const { trip, country } = require("../../models");
 
 exports.addTrip = async (req, res) => {
@@ -10,8 +11,7 @@ exports.addTrip = async (req, res) => {
       allImage.push(req.files.image[item].filename);
     }
     const imageToString = JSON.stringify(allImage);
-    console.log(imageToString);
-    let dataTrip = await trip.create({
+    await trip.create({
       ...data,
       image: imageToString,
     });
@@ -19,7 +19,8 @@ exports.addTrip = async (req, res) => {
     res.send({
       status: "success",
       message: "add trip success",
-      data: dataTrip,
+      ...data,
+      image: allImage.map((el) => `localhost:3000/api/v1/uploads/${el}`),
     });
   } catch (error) {
     console.log(error);
@@ -40,11 +41,36 @@ exports.getTrip = async (req, res) => {
           exclude: ["createdAt", "updatedAt", "countries"],
         },
       },
+      exclude: ["createdAt", "updatedAt"],
     });
+
+    const newData = [];
+
+    for (let item of dataTrip) {
+      newData.push(item);
+    }
+
     res.send({
       status: "success",
       message: "get trip success",
-      data: dataTrip,
+      data: newData.map((el) => {
+        return {
+          title: el.title,
+          countries: el.country,
+          accomodation: el.accomodation,
+          transportation: el.transportation,
+          eat: el.eat,
+          day: el.day,
+          night: el.night,
+          dateTrip: el.dateTrip,
+          price: el.price,
+          quota: el.quota,
+          description: el.description,
+          image: JSON.parse(el.image).map(
+            (el) => `localhost:3000/api/v1/uploads/${el}`
+          ),
+        };
+      }),
     });
   } catch (error) {
     console.log(error);
@@ -146,7 +172,7 @@ exports.editTrip = async (req, res) => {
 
 exports.deleteTrip = async (req, res) => {
   try {
-    const { id } = req.body;
+    const { id } = req.params;
     await trip.destroy({
       where: {
         id,
