@@ -1,26 +1,23 @@
-const { title } = require("process");
 const { trip, country } = require("../../models");
 
 exports.addTrip = async (req, res) => {
   try {
     const { ...data } = req.body;
-    const { ...attachment } = req.files.image;
-    const allImage = [];
 
-    for (let item in attachment) {
-      allImage.push(req.files.image[item].filename);
-    }
+    const allImage = req.files.image.map((el) => el.filename);
+
     const imageToString = JSON.stringify(allImage);
     await trip.create({
       ...data,
       image: imageToString,
     });
+    console.log(req.files.image);
 
     res.send({
       status: "success",
       message: "add trip success",
       ...data,
-      image: allImage.map((el) => `localhost:3000/api/v1/uploads/${el}`),
+      image: allImage.map((el) => `http://localhost:3000/api/v1/uploads/${el}`),
     });
   } catch (error) {
     console.log(error);
@@ -67,7 +64,7 @@ exports.getTrip = async (req, res) => {
           quota: el.quota,
           description: el.description,
           image: JSON.parse(el.image).map(
-            (el) => `localhost:3000/api/v1/uploads/${el}`
+            (el) => `http://localhost:3000/api/v1/uploads/${el}`
           ),
         };
       }),
@@ -84,15 +81,16 @@ exports.getTrip = async (req, res) => {
 exports.getDetailTrip = async (req, res) => {
   try {
     const { id } = req.params;
-    const dataCountry = await trip.findOne({
+    const dataTrip = await trip.findOne({
       where: {
         id,
       },
     });
+
     res.send({
       status: "success",
       message: "get detail trip success",
-      data: dataCountry,
+      data: dataTrip,
     });
   } catch (error) {
     console.log(error);
