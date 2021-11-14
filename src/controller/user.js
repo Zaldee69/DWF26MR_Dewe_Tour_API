@@ -42,3 +42,43 @@ exports.deleteUser = async (req, res) => {
     });
   }
 };
+
+exports.updateUser = async (req, res) => {
+  try {
+    console.log(req.files.image[0].filename);
+
+    const dataUser = await user.findOne({
+      where: {
+        id: req.user.id,
+      },
+      attributes: {
+        exclude: ["createdAt", "updatedAt", "password"],
+      },
+    });
+
+    const image = JSON.stringify(req.files.image[0].filename).replace(
+      /['"]+/g,
+      ""
+    );
+
+    const data = {
+      ...dataUser,
+      image: `http://localhost:5000/uploads/${image}`,
+    };
+
+    await user.update(data, {
+      where: {
+        id: req.user.id,
+      },
+    });
+
+    res.status(200).send({
+      message: "Edit user success",
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(400).send({
+      message: "server error",
+    });
+  }
+};

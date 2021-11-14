@@ -1,15 +1,20 @@
 const express = require("express");
-const bp = require("body-parser");
+const cors = require("cors");
 require("dotenv").config();
 // Get routes to the variabel
 const router = require("./src/routes");
 
 const app = express();
-const port = 3000;
-app.use(bp.json());
-app.use(bp.urlencoded({ extended: true }));
+app.use(express.json());
+
+//CORS
+app.use(cors());
+
+//port
+const port = 5000;
 
 // Add endpoint grouping and router
 app.use("/api/v1/", router);
+app.use("/uploads", express.static("uploads"));
 
 app.listen(port, () => console.log(`Listening on port ${port}`));

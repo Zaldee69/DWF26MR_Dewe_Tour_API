@@ -44,6 +44,9 @@ module.exports = {
       quota: {
         type: Sequelize.INTEGER,
       },
+      quota_filled: {
+        type: Sequelize.INTEGER,
+      },
       description: {
         type: Sequelize.STRING,
       },

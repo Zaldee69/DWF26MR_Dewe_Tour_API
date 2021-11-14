@@ -6,7 +6,7 @@ const Joi = require("joi");
 const bcrypt = require("bcrypt");
 
 exports.register = async (req, res) => {
-  const { fullName, email, gender, phone, address, role } = req.body;
+  const { fullName, email, gender, phone, address } = req.body;
   const schema = Joi.object({
     fullName: Joi.string().min(5).required(),
     email: Joi.string().email().min(6).required(),
@@ -14,13 +14,13 @@ exports.register = async (req, res) => {
     phone: Joi.string().min(6).required(),
     address: Joi.string().min(1).required(),
     gender: Joi.string().min(1).required(),
-    role: Joi.string().min(3).required(),
   });
 
   const { error } = schema.validate(req.body);
 
   //do validation and get error
   if (error) {
+    console.log(error);
     return res.status(400).send({
       error: {
         message: error.details[0].message,
@@ -55,7 +55,8 @@ exports.register = async (req, res) => {
       phone,
       address,
       gender,
-      role,
+      role: "user",
+      image: "http://localhost:5000/uploads/blank.png",
     });
     const token = jwt.sign(
       { id: newUser.id, role: newUser.role },
@@ -65,7 +66,6 @@ exports.register = async (req, res) => {
     res.status(200).send({
       status: "success",
       fullName: newUser.fullName,
-      email: newUser.email,
       token,
     });
   } catch (error) {
@@ -78,7 +78,6 @@ exports.register = async (req, res) => {
 };
 
 exports.userLogin = async (req, res) => {
-  console.log(req.body);
   //validation schema
   const schema = Joi.object({
     email: Joi.string().min(6).required(),
@@ -87,8 +86,10 @@ exports.userLogin = async (req, res) => {
 
   //do validation adnd get error
   const { error } = schema.validate(req.body);
+  console.log(error);
 
   if (error) {
+    console.log(error);
     res.status(400).send({
       error: {
         message: error.details[0].message,
@@ -104,7 +105,6 @@ exports.userLogin = async (req, res) => {
         exclude: ["createdAt", "updatedAt"],
       },
     });
-
     if (!userExist) {
       return res.status(400).send({
         status: "failed",
@@ -132,15 +132,60 @@ exports.userLogin = async (req, res) => {
     res.status(200).send({
       status: "success",
       data: {
-        email: userExist.email,
+        fullName: userExist.fullName,
         token,
       },
     });
   } catch (error) {
     console.log(error);
-    res.status(500).send({
+    res.status(400).send({
       status: "failed",
       message: "server error",
+    });
+  }
+};
+
+exports.checkAuth = async (req, res) => {
+  try {
+    const id = req.user.id;
+
+    const dataUser = await user.findOne({
+      where: {
+        id,
+      },
+      attributes: {
+        exclude: ["createdAt", "updatedAt", "password"],
+      },
+    });
+
+    console.log(dataUser);
+
+    if (!dataUser) {
+      return res.status(404).send({
+        status: "failed",
+      });
+    }
+
+    res.send({
+      status: "success",
+      data: {
+        user: {
+          id: dataUser.id,
+          name: dataUser.fullName,
+          email: dataUser.email,
+          phone: dataUser.phone,
+          gender: dataUser.gender,
+          address: dataUser.address,
+          role: dataUser.role,
+          image: dataUser.image,
+        },
+      },
+    });
+  } catch (error) {
+    console.log(error);
+    res.status({
+      status: "failed",
+      message: "Server Error",
     });
   }
 };

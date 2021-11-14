@@ -4,13 +4,17 @@ const router = express.Router();
 // controllers
 
 const {
-  getDetailsTransaction,
   getTransaction,
   addTransaction,
   editTransaction,
+  getTransactionByUserID,
+  getTransactionByID,
+  getHistoryTransactions,
+  approvementTransaction,
+  getTransactionPending,
 } = require("../controller/transaction");
 
-const { getUsers, deleteUser } = require("../controller/user");
+const { getUsers, deleteUser, updateUser } = require("../controller/user");
 
 const {
   addCountry,
@@ -20,7 +24,7 @@ const {
   getDetailCountry,
 } = require("../controller/countries");
 
-const { register, userLogin } = require("../controller/auth");
+const { register, userLogin, checkAuth } = require("../controller/auth");
 
 const {
   addTrip,
@@ -37,10 +41,11 @@ const { auth, adminOnly } = require("../middlewares/auth");
 //auth routes
 router.post("/register", register);
 router.post("/login", userLogin);
+router.get("/check-auth", auth, checkAuth);
 
 // user routes
 router.get("/users", getUsers);
-router.get("/users", getUsers);
+router.patch("/users", auth, uploadFile("image"), updateUser);
 router.delete("/users/:id", auth, adminOnly, deleteUser);
 
 //country routes
@@ -54,13 +59,22 @@ router.patch("/country/:id", auth, adminOnly, editCountry);
 router.post("/trip", uploadFile("image"), auth, adminOnly, addTrip);
 router.get("/trip", getTrip);
 router.get("/trip/:id", getDetailTrip);
-router.patch("/trip/:id", auth, adminOnly, editTrip);
+router.patch("/trip/:id", auth, editTrip);
 router.delete("/trip/:id", auth, adminOnly, deleteTrip);
 
 //transaction routes
 router.post("/transaction", auth, addTransaction);
-router.get("/transaction", auth, getTransaction);
-router.get("/transaction/:id", auth, getDetailsTransaction);
-router.patch("/transaction/:id", adminOnly, auth, editTransaction);
+router.get("/transactions", auth, adminOnly, getTransaction);
+router.get("/transactions/pending", auth, adminOnly, getTransactionPending);
+router.get("/transaction", auth, getTransactionByUserID);
+router.get("/history-transactions", auth, getHistoryTransactions);
+router.get("/user-transaction/:id", auth, adminOnly, getTransactionByID);
+router.patch("/transaction/:id", auth, uploadFile("image"), editTransaction);
+router.patch(
+  "/transactions/admin/list-transaction/:id",
+  auth,
+  adminOnly,
+  approvementTransaction
+);
 
 module.exports = router;
