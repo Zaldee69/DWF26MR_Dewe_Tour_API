@@ -16,7 +16,7 @@ module.exports = {
           gender: "Male",
           email: "admin@gmail.com",
           password:
-            "$$2a$12$mq4xqbNO1L3n730FyXnLKOnkbpdOnQmfdeF2P/tbTqHmskcTfyne6",
+            "$2a$10$VYrBNksvrxwRvUfogkPNt.BMCHAuyQBs61UeqHV1QaqEXjzR6hKyy",
           address: "unknown",
           phone: "082254654721",
           createdAt: new Date(),
