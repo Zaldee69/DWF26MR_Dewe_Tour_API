@@ -15,7 +15,8 @@ module.exports = {
           role: "admin",
           gender: "Male",
           email: "admin@gmail.com",
-          password: "123456",
+          password:
+            "$2b$10$dtqq2eHYHqJEUM28WxDlG.k0jNSVsoMLRCM.HUg3MHomEtT9Qecnm",
           address: "unknown",
           phone: "082254654721",
           createdAt: new Date(),
