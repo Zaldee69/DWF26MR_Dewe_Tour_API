@@ -22,6 +22,18 @@ module.exports = {
           createdAt: new Date(),
           updatedAt: new Date(),
         },
+        {
+          fullName: "Muhammad Rizaldy",
+          role: "user",
+          gender: "Male",
+          email: "akuzaldee@gmail.com",
+          password:
+            "$2a$10$VYrBNksvrxwRvUfogkPNt.BMCHAuyQBs61UeqHV1QaqEXjzR6hKyy",
+          address: "unknown",
+          phone: "082254654721",
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
       ],
       {}
     );
@@ -33,6 +45,6 @@ module.exports = {
       Return a promise to correctly handle asynchronicity.
 
       Example:*/
-    return queryInterface.bulkDelete("users", null, {});
+    // return queryInterface.bulkDelete("users", null, {});
   },
 };
