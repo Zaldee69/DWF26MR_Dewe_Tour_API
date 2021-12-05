@@ -24,7 +24,7 @@ module.exports = {
         },
         {
           fullName: "Muhammad Rizaldy",
-          role: "user",
+          role: "admin",
           gender: "Male",
           email: "akuzaldee@gmail.com",
           password:
