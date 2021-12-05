@@ -1,4 +1,5 @@
 const { user } = require("../../models");
+const cloudinary = require("../thirdparty/cloudinary");
 
 //import package
 const jwt = require("jsonwebtoken");
@@ -55,7 +56,7 @@ exports.register = async (req, res) => {
       address,
       gender,
       role: "user",
-      image: "http://localhost:5000/uploads/blank.png",
+      image: "dewe_tour/blank-profile-picture-973460_yqiiwe.png",
     });
     const token = jwt.sign(
       { id: newUser.id, role: newUser.role },
@@ -131,6 +132,10 @@ exports.checkAuth = async (req, res) => {
       },
     });
 
+    const image = cloudinary.url(dataUser.image);
+
+    console.log(image);
+
     if (!dataUser) {
       return res.status(404).send({
         status: "failed",
@@ -147,7 +152,7 @@ exports.checkAuth = async (req, res) => {
             gender: dataUser.gender,
             address: dataUser.address,
             role: dataUser.role,
-            image: dataUser.image,
+            image: image,
           },
         },
       });

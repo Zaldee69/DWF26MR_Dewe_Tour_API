@@ -21,6 +21,7 @@ module.exports = {
           phone: "082254654721",
           createdAt: new Date(),
           updatedAt: new Date(),
+          image: "dewe_tour/blank-profile-picture-973460_yqiiwe.png",
         },
         {
           fullName: "Muhammad Rizaldy",
@@ -33,6 +34,7 @@ module.exports = {
           phone: "082254654721",
           createdAt: new Date(),
           updatedAt: new Date(),
+          image: "dewe_tour/blank-profile-picture-973460_yqiiwe.png",
         },
       ],
       {}

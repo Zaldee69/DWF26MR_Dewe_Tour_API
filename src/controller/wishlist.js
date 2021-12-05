@@ -1,4 +1,5 @@
 const { wishlist, country, trip } = require("../../models");
+const cloudinary = require("../thirdparty/cloudinary");
 
 exports.addWishlist = async (req, res) => {
   try {
@@ -85,9 +86,7 @@ exports.getWishlist = async (req, res) => {
           quota: el.quota,
           quota_filled: el.quota_filled,
           description: el.description,
-          image: JSON.parse(el.image).map(
-            (el) => `http://localhost:5000/uploads/${el}`
-          ),
+          image: JSON.parse(el.image).map((el) => cloudinary.url(el)),
         };
       }),
     });

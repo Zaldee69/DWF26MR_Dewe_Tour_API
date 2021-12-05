@@ -1,4 +1,5 @@
 const { transaction, user, trip, country } = require("../../models");
+const cloudinary = require("../thirdparty/cloudinary");
 
 exports.addTransaction = async (req, res) => {
   try {
@@ -66,7 +67,6 @@ exports.getTransaction = async (req, res) => {
       data: dataTransaction,
     });
   } catch (error) {
-    console.log(error);
     res.send({
       status: "failed",
       message: "get all trasnsaction failed",
@@ -112,13 +112,16 @@ exports.getTransactionPending = async (req, res) => {
         },
       ],
     });
+
+    console.log(image);
+
     res.send({
       status: "success",
       message: "get all transaction success",
-      data: dataTransaction,
+      ...dataTransaction,
+      attachment: dataTransaction.map((el) => cloudinary.url(el.attachment)),
     });
   } catch (error) {
-    console.log(error);
     res.send({
       status: "failed",
       message: "get all trasnsaction failed",
@@ -128,8 +131,6 @@ exports.getTransactionPending = async (req, res) => {
 
 exports.getTransactionByUserID = async (req, res) => {
   try {
-    console.log(req.user);
-
     const dataTransaction = await transaction.findAll({
       where: {
         user: req.user.id,
@@ -238,7 +239,6 @@ exports.getHistoryTransactions = async (req, res) => {
 };
 
 exports.getTransactionByID = async (req, res) => {
-  console.log(req.params);
   try {
     const { id } = req.params;
     const dataTransaction = await transaction.findOne({
@@ -279,8 +279,6 @@ exports.getTransactionByID = async (req, res) => {
       ],
     });
 
-    console.log(dataTransaction);
-
     res.status(200).send({
       message: "success",
       data: dataTransaction,
@@ -294,6 +292,11 @@ exports.editTransaction = async (req, res) => {
   try {
     const { id } = req.params;
 
+    const results = await cloudinary.uploader.upload(req.files.image[0].path, {
+      folder: "dewe_tour",
+      use_filename: true,
+    });
+
     const dataTransaction = await transaction.findOne({
       where: {
         id,
@@ -304,9 +307,7 @@ exports.editTransaction = async (req, res) => {
       {
         ...dataTransaction,
         status: req.body.status,
-        attachment: `http://localhost:5000/uploads/${JSON.stringify(
-          req.files.image[0].filename
-        ).replace(/['"]+/g, "")}`,
+        attachment: `http://res.cloudinary.com/dpfsxu9uk/image/upload/v1/${results.public_id}`,
       },
       {
         where: {

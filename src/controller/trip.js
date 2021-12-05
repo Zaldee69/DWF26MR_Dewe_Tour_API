@@ -1,23 +1,30 @@
 const { trip, country } = require("../../models");
+const cloudinary = require("../thirdparty/cloudinary");
 
 exports.addTrip = async (req, res) => {
   try {
     const { ...data } = req.body;
 
-    const allImage = req.files.image.map((el) => el.filename);
+    const multiplePicturePromise = req.files.image.map((el) => {
+      return cloudinary.uploader.upload(el.path, {
+        folder: "dewe_tour",
+        use_filename: true,
+      });
+    });
 
-    const imageToString = JSON.stringify(allImage);
+    const image = await Promise.all(multiplePicturePromise);
+
+    const newImage = image.map((el) => el.public_id);
+
     await trip.create({
       ...data,
-      image: imageToString,
+      image: JSON.stringify(newImage),
       quota_filled: 0,
     });
 
     res.status(200).send({
       status: "success",
       message: "add trip success",
-      ...data,
-      image: allImage.map((el) => `http://localhost:5000/uploads/${el}`),
     });
   } catch (error) {
     res.status(400).send({
@@ -64,9 +71,7 @@ exports.getTrip = async (req, res) => {
           quota: el.quota,
           quota_filled: el.quota_filled,
           description: el.description,
-          image: JSON.parse(el.image).map(
-            (el) => `http://localhost:5000/uploads/${el}`
-          ),
+          image: JSON.parse(el.image).map((el) => cloudinary.url(el)),
         };
       }),
     });
@@ -98,8 +103,6 @@ exports.getDetailTrip = async (req, res) => {
 
     const newImg = JSON.parse(dataTrip.dataValues.image);
 
-    console.log(dataTrip);
-
     res.send({
       status: "success",
       message: "get detail trip success",
@@ -116,8 +119,7 @@ exports.getDetailTrip = async (req, res) => {
       quota: dataTrip.quota,
       quota_filled: dataTrip.quota_filled,
       description: dataTrip.description,
-      image: newImg.map((el) => `http://localhost:5000/uploads/${el}`),
-
+      image: newImg.map((el) => cloudinary.url(el)),
       // image: newData.image,
     });
   } catch (error) {

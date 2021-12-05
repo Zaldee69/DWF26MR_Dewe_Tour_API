@@ -1,4 +1,5 @@
 const { user } = require("../../models");
+const cloudinary = require("../thirdparty/cloudinary");
 
 exports.getUsers = async (req, res) => {
   try {
@@ -42,8 +43,6 @@ exports.deleteUser = async (req, res) => {
 
 exports.updateUser = async (req, res) => {
   try {
-    console.log(req.files.image[0].filename);
-
     const dataUser = await user.findOne({
       where: {
         id: req.user.id,
@@ -53,14 +52,14 @@ exports.updateUser = async (req, res) => {
       },
     });
 
-    const image = JSON.stringify(req.files.image[0].filename).replace(
-      /['"]+/g,
-      ""
-    );
+    const results = await cloudinary.uploader.upload(req.files.image[0].path, {
+      folder: "dewe_tour",
+      use_filename: true,
+    });
 
     const data = {
       ...dataUser,
-      image: `http://localhost:5000/uploads/${image}`,
+      image: results.public_id,
     };
 
     await user.update(data, {
