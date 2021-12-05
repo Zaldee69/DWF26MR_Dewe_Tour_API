@@ -1,5 +1,4 @@
 const { user } = require("../../models");
-const jwt = require("jsonwebtoken");
 
 exports.getUsers = async (req, res) => {
   try {
@@ -13,7 +12,6 @@ exports.getUsers = async (req, res) => {
       data: users,
     });
   } catch (error) {
-    console.log(error);
     res.send({
       status: "failed",
       message: "Server Error",
@@ -35,7 +33,6 @@ exports.deleteUser = async (req, res) => {
       message: "delete user successfully",
     });
   } catch (error) {
-    console.log(error);
     res.send({
       status: "failed",
       message: "server error",
@@ -76,7 +73,6 @@ exports.updateUser = async (req, res) => {
       message: "Edit user success",
     });
   } catch (error) {
-    console.log(error);
     res.status(400).send({
       message: "server error",
     });

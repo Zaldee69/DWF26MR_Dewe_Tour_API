@@ -2,9 +2,9 @@ const { transaction, user, trip, country } = require("../../models");
 
 exports.addTransaction = async (req, res) => {
   try {
-    const { ...data } = req.body;
+    const { ...bookingData } = req.body;
     const transactionData = await transaction.create({
-      ...data,
+      ...bookingData,
       status: "Waiting Payment",
     });
     res.send({

@@ -4,8 +4,6 @@ exports.addTrip = async (req, res) => {
   try {
     const { ...data } = req.body;
 
-    console.log(req.body);
-
     const allImage = req.files.image.map((el) => el.filename);
 
     const imageToString = JSON.stringify(allImage);
@@ -22,7 +20,6 @@ exports.addTrip = async (req, res) => {
       image: allImage.map((el) => `http://localhost:5000/uploads/${el}`),
     });
   } catch (error) {
-    console.log(error);
     res.status(400).send({
       status: "failed",
       message: error,

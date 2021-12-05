@@ -34,6 +34,12 @@ const {
   editTrip,
 } = require("../controller/trip");
 
+const {
+  addWishlist,
+  getWishlist,
+  deleteWishlist,
+} = require("../controller/wishlist");
+
 //middlewares
 const { uploadFile } = require("../middlewares/uploadImage");
 const { auth, adminOnly } = require("../middlewares/auth");
@@ -76,5 +82,10 @@ router.patch(
   adminOnly,
   approvementTransaction
 );
+
+//wishlist routes
+router.post("/wishlist", auth, addWishlist);
+router.get("/wishlist", auth, getWishlist);
+router.delete("/wishlist/:id", auth, deleteWishlist);
 
 module.exports = router;

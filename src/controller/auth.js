@@ -20,7 +20,6 @@ exports.register = async (req, res) => {
 
   //do validation and get error
   if (error) {
-    console.log(error);
     return res.status(400).send({
       error: {
         message: error.details[0].message,
@@ -69,7 +68,6 @@ exports.register = async (req, res) => {
       token,
     });
   } catch (error) {
-    console.log(error);
     res.status(500).send({
       status: "failed",
       message: "server error",
@@ -78,70 +76,45 @@ exports.register = async (req, res) => {
 };
 
 exports.userLogin = async (req, res) => {
-  //validation schema
-  const schema = Joi.object({
-    email: Joi.string().min(6).required(),
-    password: Joi.string().min(6).required(),
+  const userExist = await user.findOne({
+    where: {
+      email: req.body.email,
+    },
+    attributes: {
+      exclude: ["createdAt", "updatedAt"],
+    },
   });
-
-  //do validation adnd get error
-  const { error } = schema.validate(req.body);
-  console.log(error);
-
-  if (error) {
-    console.log(error);
-    res.status(400).send({
-      error: {
-        message: error.details[0].message,
-      },
+  if (!userExist) {
+    return res.status(400).send({
+      status: "failed",
+      message: "User doesn't exist,register please",
     });
-  }
-  try {
-    const userExist = await user.findOne({
-      where: {
-        email: req.body.email,
-      },
-      attributes: {
-        exclude: ["createdAt", "updatedAt"],
-      },
+  } else if (!bcrypt.compareSync(req.body.password, userExist.password)) {
+    res.status(401).send({
+      status: "failed",
+      message: "Email or Password incorrect",
     });
-    if (!userExist) {
-      return res.status(400).send({
-        status: "failed",
-        message: "credential is invalid",
+  } else {
+    try {
+      //generate token
+      const token = jwt.sign(
+        { id: userExist.id, role: userExist.role },
+        process.env.ACCESS_TOKEN_SECRET
+      );
+
+      res.status(200).send({
+        status: "success",
+        data: {
+          fullName: userExist.fullName,
+          token,
+        },
       });
-    }
-
-    //compare password from client and database
-    const isValid = await bcrypt.compare(req.body.password, userExist.password);
-
-    //check password valid or not
-    if (!isValid) {
+    } catch (error) {
       res.status(400).send({
         status: "failed",
-        message: "credential is invalid",
+        message: "server error",
       });
     }
-
-    //generate token
-    const token = jwt.sign(
-      { id: userExist.id, role: userExist.role },
-      process.env.ACCESS_TOKEN_SECRET
-    );
-
-    res.status(200).send({
-      status: "success",
-      data: {
-        fullName: userExist.fullName,
-        token,
-      },
-    });
-  } catch (error) {
-    console.log(error);
-    res.status(400).send({
-      status: "failed",
-      message: "server error",
-    });
   }
 };
 
@@ -158,31 +131,28 @@ exports.checkAuth = async (req, res) => {
       },
     });
 
-    console.log(dataUser);
-
     if (!dataUser) {
       return res.status(404).send({
         status: "failed",
       });
-    }
-
-    res.send({
-      status: "success",
-      data: {
-        user: {
-          id: dataUser.id,
-          name: dataUser.fullName,
-          email: dataUser.email,
-          phone: dataUser.phone,
-          gender: dataUser.gender,
-          address: dataUser.address,
-          role: dataUser.role,
-          image: dataUser.image,
+    } else {
+      res.send({
+        status: "success",
+        data: {
+          user: {
+            id: dataUser.id,
+            name: dataUser.fullName,
+            email: dataUser.email,
+            phone: dataUser.phone,
+            gender: dataUser.gender,
+            address: dataUser.address,
+            role: dataUser.role,
+            image: dataUser.image,
+          },
         },
-      },
-    });
+      });
+    }
   } catch (error) {
-    console.log(error);
     res.status({
       status: "failed",
       message: "Server Error",
