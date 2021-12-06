@@ -8,7 +8,7 @@ exports.uploadFile = (imageFile) => {
       cb(null, "uploads");
     },
     filename: (req, file, cb) => {
-      cb(null, Date.now() + "-" + file.originalname.replace(/\s/g, ""));
+      cb(null, file.originalname.replace(/\s/g, ""));
     },
   });
   //file filter function

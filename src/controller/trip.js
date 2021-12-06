@@ -9,6 +9,7 @@ exports.addTrip = async (req, res) => {
       return cloudinary.uploader.upload(el.path, {
         folder: "dewe_tour",
         use_filename: true,
+        unique_filename: true,
       });
     });
 
