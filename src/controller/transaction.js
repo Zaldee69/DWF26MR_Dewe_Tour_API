@@ -26,7 +26,7 @@ exports.getTransaction = async (req, res) => {
   try {
     const dataTransaction = await transaction.findAll({
       where: {
-        status: [["Pending", "Approve", "Cancel"]],
+        status: ["Pending", "Approve", "Cancel"],
       },
       exclude: ["createdAt", "updatedAt", "id"],
       include: [
