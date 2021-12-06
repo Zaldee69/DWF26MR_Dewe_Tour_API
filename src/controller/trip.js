@@ -28,12 +28,9 @@ exports.addTrip = async (req, res) => {
       message: "add trip success",
     });
   } catch (error) {
-    console.log(error);
-
     res.status(500).send({
       status: "failed",
       message: error,
-      body: req.body,
     });
   }
 };
