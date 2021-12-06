@@ -132,7 +132,6 @@ exports.getTransactionByUserID = async (req, res) => {
     const dataTransaction = await transaction.findAll({
       where: {
         user: req.user.id,
-        status: [["Waiting Payment"]],
       },
       exclude: ["createdAt", "updatedAt", "id"],
       include: [
