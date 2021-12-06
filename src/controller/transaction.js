@@ -67,9 +67,9 @@ exports.getTransaction = async (req, res) => {
       data: dataTransaction,
     });
   } catch (error) {
-    res.send({
+    res.status(400).send({
       status: "failed",
-      message: "get all trasnsaction failed",
+      message: error,
     });
   }
 };
