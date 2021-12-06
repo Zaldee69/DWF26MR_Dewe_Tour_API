@@ -113,16 +113,16 @@ exports.getTransactionPending = async (req, res) => {
       ],
     });
 
-    res.send({
+    res.status(200).send({
       status: "success",
       message: "get all transaction success",
       ...dataTransaction,
       attachment: dataTransaction.map((el) => cloudinary.url(el.attachment)),
     });
   } catch (error) {
-    res.send({
+    res.status(400).send({
       status: "failed",
-      message: "get all trasnsaction failed",
+      message: error,
     });
   }
 };
@@ -184,7 +184,7 @@ exports.getHistoryTransactions = async (req, res) => {
     const dataTransaction = await transaction.findAll({
       where: {
         user: req.user.id,
-        status: [["Approve", "Cancel"]],
+        status: ["Approve", "Cancel"],
       },
       exclude: ["createdAt", "updatedAt", "id"],
       include: [
@@ -220,15 +220,15 @@ exports.getHistoryTransactions = async (req, res) => {
       ],
     });
 
-    res.send({
+    res.status(200).send({
       status: "success",
       message: "get details transaction success",
       data: dataTransaction,
     });
   } catch (error) {
-    res.send({
+    res.status(400).send({
       status: "failed",
-      message: "get details transaction failed",
+      message: error,
     });
   }
 };
@@ -279,7 +279,10 @@ exports.getTransactionByID = async (req, res) => {
       data: dataTransaction,
     });
   } catch (error) {
-    console.log(error);
+    res.status(400).send({
+      status: "failed",
+      message: error,
+    });
   }
 };
 
