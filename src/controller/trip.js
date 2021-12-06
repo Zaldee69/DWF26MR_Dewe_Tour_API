@@ -27,9 +27,12 @@ exports.addTrip = async (req, res) => {
       message: "add trip success",
     });
   } catch (error) {
-    res.status(400).send({
+    console.log(error);
+
+    res.status(500).send({
       status: "failed",
       message: error,
+      body: req.body,
     });
   }
 };
@@ -76,7 +79,6 @@ exports.getTrip = async (req, res) => {
       }),
     });
   } catch (error) {
-    console.log(error);
     res.send({
       status: "failed",
       message: "get trip failed",
