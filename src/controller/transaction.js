@@ -113,8 +113,6 @@ exports.getTransactionPending = async (req, res) => {
       ],
     });
 
-    console.log(image);
-
     res.send({
       status: "success",
       message: "get all transaction success",
@@ -170,16 +168,15 @@ exports.getTransactionByUserID = async (req, res) => {
       ],
     });
 
-    res.send({
+    res.status(200).send({
       status: "success",
       message: "get details transaction success",
       data: dataTransaction,
     });
   } catch (error) {
-    console.log(error);
-    res.send({
+    res.status(400).send({
       status: "failed",
-      message: "get details transaction failed",
+      message: error,
     });
   }
 };
@@ -230,7 +227,6 @@ exports.getHistoryTransactions = async (req, res) => {
       data: dataTransaction,
     });
   } catch (error) {
-    console.log(error);
     res.send({
       status: "failed",
       message: "get details transaction failed",
